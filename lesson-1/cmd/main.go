@@ -25,7 +25,7 @@ func main() {
 
 	sWord := flag.String("s", "", "Please, input word(s)")
 	flag.Parse()
-	fmt.Println(*sWord)
+
 	if *sWord == "" {
 		fmt.Println("Please, read help: -help \n Thanks.")
 		return
