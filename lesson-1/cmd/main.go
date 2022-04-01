@@ -18,7 +18,7 @@ func main() {
 		data, err := serv.Scan(url, 2)
 		if err != nil {
 			fmt.Println("Scan error. Please, try again.")
-			return
+			continue
 		}
 		total = append(total, data...)
 	}
