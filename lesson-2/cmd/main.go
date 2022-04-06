@@ -11,11 +11,9 @@ import (
 
 var urls = []string{"https://golang.com", "https://go.dev"}
 
-func scan(urls []string, idx index.Service) ([]crawler.Document, error) {
+func scan(urls []string, idx *index.Service, serv *spider.Service) ([]crawler.Document, error) {
 	var total []crawler.Document
 	var count = 0
-
-	serv := spider.New()
 
 	for _, url := range urls {
 		data, err := serv.Scan(url, 2)
@@ -35,8 +33,9 @@ func scan(urls []string, idx index.Service) ([]crawler.Document, error) {
 }
 func main() {
 
+	serv := spider.New()
 	idx := index.New()
-	t, err := scan(urls, *idx)
+	t, err := scan(urls, idx, serv)
 	if err != nil {
 		fmt.Printf("Error is %s\n", err)
 	}
