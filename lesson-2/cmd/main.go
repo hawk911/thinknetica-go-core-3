@@ -5,39 +5,22 @@ import (
 	"fmt"
 	"github/hawk911/pkg/crawler"
 	"github/hawk911/pkg/crawler/spider"
-	"github/hawk911/pkg/index"
 	"strings"
 )
 
-var urls = []string{"https://golang.com", "https://go.dev"}
-
-func scan(urls []string, idx *index.Service, serv *spider.Service) ([]crawler.Document, error) {
+func main() {
 	var total []crawler.Document
-	var count = 0
+
+	serv := spider.New()
+	urls := [2]string{"https://golang.com", "https://go.dev"}
 
 	for _, url := range urls {
 		data, err := serv.Scan(url, 2)
 		if err != nil {
 			fmt.Println("Scan error. Please, try again.")
-			return total, err
+			continue
 		}
-
-		for _, i := range data {
-			i.ID = count
-			idx.Add(i.Title, i.ID)
-			total = append(total, i)
-			count++
-		}
-	}
-	return total, nil
-}
-func main() {
-
-	serv := spider.New()
-	idx := index.New()
-	t, err := scan(urls, idx, serv)
-	if err != nil {
-		fmt.Printf("Error is %s\n", err)
+		total = append(total, data...)
 	}
 
 	sWord := flag.String("s", "", "Please, input word(s)")
@@ -48,15 +31,21 @@ func main() {
 		return
 	}
 
-	ids := idx.Search(strings.ToLower(*sWord))
+	var fData []crawler.Document
 
-	if len(ids) == 0 {
+	for _, v := range total {
+		if strings.Contains(strings.ToLower(v.Title), strings.ToLower(*sWord)) {
+			fData = append(fData, v)
+		}
+	}
+
+	if len(fData) == 0 {
 		fmt.Println("Nothing was found.")
 		return
 	}
 
-	for _, id := range ids {
-		fmt.Printf("Title: %s\nURL: %s\n\n", t[id].Title, t[id].URL)
+	for _, v := range fData {
+		fmt.Printf("Title: %s\nURL: %s\n\n", v.Title, v.URL)
 	}
 	fmt.Println("Thanks for using our solution!")
 }
